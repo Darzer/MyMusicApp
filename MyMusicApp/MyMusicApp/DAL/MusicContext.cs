@@ -14,12 +14,12 @@ namespace MyMusicApp.DAL
         public MusicContext() : base("MusicContext") { }
         public DbSet<Artist> Artists { get; set; }
         public DbSet<Album> Albums { get; set; }
+        public DbSet<Song> Songs { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             modelBuilder.Conventions.Remove<PluralizingTableNameConvention>();
-        }
-
-        public System.Data.Entity.DbSet<MyMusicApp.Models.Song> Songs { get; set; }
+            modelBuilder.Entity<Song>().HasRequired(a => a.Artist).WithMany().WillCascadeOnDelete(false);
+        }    
     }
 }

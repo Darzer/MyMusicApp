@@ -12,9 +12,11 @@ namespace MyMusicApp.Models
         public int ID { get; set; }
         [Display(Name = "Song")]
         public string Title { get; set; }
+        public int ArtistID { get; set; }
         public int AlbumID { get; set; }
         [Display(Name = "Duration")]
         public TimeSpan TrackLength { get; set; }
         public virtual Album Album { get; set; }
+        public virtual Artist Artist { get; set; }
     }
 }
