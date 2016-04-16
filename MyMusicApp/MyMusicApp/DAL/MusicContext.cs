@@ -19,5 +19,7 @@ namespace MyMusicApp.DAL
         {
             modelBuilder.Conventions.Remove<PluralizingTableNameConvention>();
         }
+
+        public System.Data.Entity.DbSet<MyMusicApp.Models.Song> Songs { get; set; }
     }
 }
