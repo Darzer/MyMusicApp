@@ -18,7 +18,7 @@ namespace MyMusicApp.Controllers
         // GET: Song
         public ActionResult Index()
         {
-            var songs = db.Songs.Include(s => s.Album);
+            var songs = db.Songs.Include(s => s.Album).Include(s => s.Artist);
             return View(songs.ToList());
         }
 
@@ -41,6 +41,7 @@ namespace MyMusicApp.Controllers
         public ActionResult Create()
         {
             ViewBag.AlbumID = new SelectList(db.Albums, "ID", "Title");
+            ViewBag.ArtistID = new SelectList(db.Artists, "ID", "ConcatNames");
             return View();
         }
 
@@ -49,7 +50,7 @@ namespace MyMusicApp.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "ID,name,AlbumID,trackLength")] Song song)
+        public ActionResult Create([Bind(Include = "ID,Title,ArtistID,AlbumID,TrackLength")] Song song)
         {
             if (ModelState.IsValid)
             {
@@ -59,6 +60,7 @@ namespace MyMusicApp.Controllers
             }
 
             ViewBag.AlbumID = new SelectList(db.Albums, "ID", "Title", song.AlbumID);
+            ViewBag.ArtistID = new SelectList(db.Artists, "ID", "ConcatNames", song.ArtistID);
             return View(song);
         }
 
@@ -75,6 +77,7 @@ namespace MyMusicApp.Controllers
                 return HttpNotFound();
             }
             ViewBag.AlbumID = new SelectList(db.Albums, "ID", "Title", song.AlbumID);
+            ViewBag.ArtistID = new SelectList(db.Artists, "ID", "ConcatNames", song.ArtistID);
             return View(song);
         }
 
@@ -83,7 +86,7 @@ namespace MyMusicApp.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "ID,name,AlbumID,trackLength")] Song song)
+        public ActionResult Edit([Bind(Include = "ID,Title,ArtistID,AlbumID,TrackLength")] Song song)
         {
             if (ModelState.IsValid)
             {
@@ -92,6 +95,7 @@ namespace MyMusicApp.Controllers
                 return RedirectToAction("Index");
             }
             ViewBag.AlbumID = new SelectList(db.Albums, "ID", "Title", song.AlbumID);
+            ViewBag.ArtistID = new SelectList(db.Artists, "ID", "ConcatNames", song.ArtistID);
             return View(song);
         }
 

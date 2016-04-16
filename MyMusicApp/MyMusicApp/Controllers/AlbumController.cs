@@ -40,7 +40,7 @@ namespace MyMusicApp.Controllers
         // GET: Album/Create
         public ActionResult Create()
         {
-            ViewBag.ArtistID = new SelectList(db.Artists, "ID", "LastName");
+            ViewBag.ArtistID = new SelectList(db.Artists, "ID", "ConcatNames");
             return View();
         }
 
@@ -58,7 +58,7 @@ namespace MyMusicApp.Controllers
                 return RedirectToAction("Index");
             }
 
-            ViewBag.ArtistID = new SelectList(db.Artists, "ID", "LastName", album.ArtistID);
+            ViewBag.ArtistID = new SelectList(db.Artists, "ID", "ConcatNames", album.ArtistID);
             return View(album);
         }
 
@@ -74,7 +74,7 @@ namespace MyMusicApp.Controllers
             {
                 return HttpNotFound();
             }
-            ViewBag.ArtistID = new SelectList(db.Artists, "ID", "LastName", album.ArtistID);
+            ViewBag.ArtistID = new SelectList(db.Artists, "ID", "ConcatNames", album.ArtistID);
             return View(album);
         }
 
@@ -91,7 +91,7 @@ namespace MyMusicApp.Controllers
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
-            ViewBag.ArtistID = new SelectList(db.Artists, "ID", "LastName", album.ArtistID);
+            ViewBag.ArtistID = new SelectList(db.Artists, "ID", "ConcatNames", album.ArtistID);
             return View(album);
         }
 
