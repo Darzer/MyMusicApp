@@ -16,9 +16,43 @@ namespace MyMusicApp.Controllers
         private MusicContext db = new MusicContext();
 
         // GET: Song
-        public ActionResult Index()
+        public ActionResult Index(string sortOrder)
         {
-            var songs = db.Songs.Include(s => s.Album).Include(s => s.Artist);
+            ViewBag.SongSort = String.IsNullOrEmpty(sortOrder) ? "song_desc" : "";
+            ViewBag.AlbumSort = sortOrder == "album_asc" ? "album_desc" : "album_asc";
+            ViewBag.ArtistSort = sortOrder == "artist_asc" ? "artist_desc" : "artist_asc";
+            ViewBag.DurationSort = sortOrder == "duration_asc" ? "duration_desc" : "duration_asc";
+            var songs = from a in db.Songs.Include(a => a.Album).Include(a => a.Artist) select a;
+
+            switch(sortOrder)
+            {
+                case "song_desc":
+                    songs = songs.OrderByDescending(a => a.Title);
+                    break;
+                case "album_asc":
+                    songs = songs.OrderBy(a => a.Album.Title);
+                    break;
+                case "album_desc":
+                    songs = songs.OrderByDescending(a => a.Album.Title);
+                    break;
+                case "artist_asc":
+                    songs = songs.OrderBy(a => a.Artist.FirstName).ThenBy(a => a.Artist.LastName);
+                    break;
+                case "artist_desc":
+                    songs = songs.OrderByDescending(a => a.Artist.FirstName).ThenByDescending(a => a.Artist.LastName);
+                    break;
+                case "duration_asc":
+                    songs = songs.OrderBy(a => a.TrackLength);
+                    break;
+                case "duration_desc":
+                    songs = songs.OrderByDescending(a => a.TrackLength);
+                    break;
+                default:
+                    songs = songs.OrderBy(a => a.Title);
+                    break;
+
+            }
+
             return View(songs.ToList());
         }
 

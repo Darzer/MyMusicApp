@@ -17,7 +17,7 @@ namespace MyMusicApp.Models
         public virtual ICollection<Album> Albums { get; set; }
         public virtual ICollection<Song> Songs { get; set; }
 
-        public string ConcatNames // Used to display Artists full name in the drop-down list on Create Album
+        public string ConcatNames // Used to display Artists full name in the drop-down lists
         {
             get
             {
