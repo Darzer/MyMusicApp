@@ -16,11 +16,23 @@ namespace MyMusicApp.Controllers
         private MusicContext db = new MusicContext();
 
         // GET: Artist
-        public ActionResult Index(string sortOrder)
+        public ActionResult Index(string sortOrder, string searchString)
         {
             ViewBag.FirstNameSort = String.IsNullOrEmpty(sortOrder) ? "first_name_desc" : "";
             ViewBag.LastNameSort = sortOrder == "last_name_asc" ? "last_name_desc" : "last_name_asc";
             var artists = from a in db.Artists select a;
+
+            // If searchString isn't empty this statement will compare it to Artist.FirstName & .LastName after capitalising each of them.
+            // If it matches any entries in the Artist table they will be assigned to 'artists'.
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                artists = artists.Where(a => a.FirstName.ToUpper().Contains(searchString.ToUpper())
+                                            ||
+                a.LastName.ToUpper().Contains(searchString.ToUpper())
+                                            ||
+                String.Concat(a.FirstName + " " + a.LastName).ToUpper().Contains(searchString.ToUpper()));
+            }
+
             switch(sortOrder)
             {
                 case "first_name_desc":

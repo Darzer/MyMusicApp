@@ -16,13 +16,22 @@ namespace MyMusicApp.Controllers
         private MusicContext db = new MusicContext();
 
         // GET: Song
-        public ActionResult Index(string sortOrder)
+        public ActionResult Index(string sortOrder, string searchString)
         {
             ViewBag.SongSort = String.IsNullOrEmpty(sortOrder) ? "song_desc" : "";
             ViewBag.AlbumSort = sortOrder == "album_asc" ? "album_desc" : "album_asc";
             ViewBag.ArtistSort = sortOrder == "artist_asc" ? "artist_desc" : "artist_asc";
             ViewBag.DurationSort = sortOrder == "duration_asc" ? "duration_desc" : "duration_asc";
             var songs = from a in db.Songs.Include(a => a.Album).Include(a => a.Artist) select a;
+
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                songs = songs.Where(s => s.Title.ToUpper().Contains(searchString.ToUpper())
+                                                    ||
+                s.Album.Title.ToUpper().Contains(searchString.ToUpper())
+                                                    ||
+                String.Concat(s.Artist.FirstName + " " + s.Artist.LastName).ToUpper().Contains(searchString.ToUpper()));
+            }
 
             switch(sortOrder)
             {

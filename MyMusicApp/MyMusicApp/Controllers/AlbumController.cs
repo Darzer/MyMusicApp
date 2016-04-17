@@ -16,7 +16,7 @@ namespace MyMusicApp.Controllers
         private MusicContext db = new MusicContext();
 
         // GET: Album
-        public ActionResult Index(string sortOrder)
+        public ActionResult Index(string sortOrder, string searchString)
         {
             ViewBag.AlbumSort = String.IsNullOrEmpty(sortOrder) ? "album_desc" : "";
             ViewBag.ArtistSort = sortOrder == "artist_asc" ? "artist_desc" : "artist_asc";
@@ -26,6 +26,14 @@ namespace MyMusicApp.Controllers
             //I realised that the above code worked without the .Include but further research told me that with .Include 
             //EF will use a join to grab both the Album and Artist tables in a single query. Without Include, 
             //EF will only grab Album and then grab Artist on demand which in most cases would be a hindrance to performance.
+
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                
+                albums = albums.Where(a => a.Title.ToUpper().Contains(searchString.ToUpper())
+                                                ||
+                String.Concat(a.Artist.FirstName + " " +  a.Artist.LastName).ToUpper().Contains(searchString.ToUpper()));
+            }
 
             switch (sortOrder)
             {
