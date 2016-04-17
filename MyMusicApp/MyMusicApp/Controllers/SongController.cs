@@ -8,6 +8,7 @@ using System.Web;
 using System.Web.Mvc;
 using MyMusicApp.DAL;
 using MyMusicApp.Models;
+using PagedList;
 
 namespace MyMusicApp.Controllers
 {
@@ -16,12 +17,20 @@ namespace MyMusicApp.Controllers
         private MusicContext db = new MusicContext();
 
         // GET: Song
-        public ActionResult Index(string sortOrder, string searchString)
+        public ActionResult Index(string sortOrder, string currentFilter, string searchString, int? page)
         {
+            ViewBag.CurrentSort = sortOrder;
             ViewBag.SongSort = String.IsNullOrEmpty(sortOrder) ? "song_desc" : "";
             ViewBag.AlbumSort = sortOrder == "album_asc" ? "album_desc" : "album_asc";
             ViewBag.ArtistSort = sortOrder == "artist_asc" ? "artist_desc" : "artist_asc";
             ViewBag.DurationSort = sortOrder == "duration_asc" ? "duration_desc" : "duration_asc";
+
+            if (searchString != null)
+                page = 1;
+            else
+                searchString = currentFilter;
+            ViewBag.CurrentFilter = searchString;
+
             var songs = from a in db.Songs.Include(a => a.Album).Include(a => a.Artist) select a;
 
             if (!String.IsNullOrEmpty(searchString))
@@ -61,8 +70,9 @@ namespace MyMusicApp.Controllers
                     break;
 
             }
-
-            return View(songs.ToList());
+            int pageSize = 10;
+            int pageNumber = (page ?? 1);
+            return View(songs.ToPagedList(pageNumber, pageSize));
         }
 
         // GET: Song/Details/5

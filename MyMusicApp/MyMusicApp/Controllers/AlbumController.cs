@@ -8,6 +8,7 @@ using System.Web;
 using System.Web.Mvc;
 using MyMusicApp.DAL;
 using MyMusicApp.Models;
+using PagedList;
 
 namespace MyMusicApp.Controllers
 {
@@ -16,12 +17,20 @@ namespace MyMusicApp.Controllers
         private MusicContext db = new MusicContext();
 
         // GET: Album
-        public ActionResult Index(string sortOrder, string searchString)
+        public ActionResult Index(string sortOrder, string currentFilter, string searchString, int? page)
         {
+            ViewBag.CurrentSort = sortOrder;
             ViewBag.AlbumSort = String.IsNullOrEmpty(sortOrder) ? "album_desc" : "";
             ViewBag.ArtistSort = sortOrder == "artist_asc" ? "artist_desc" : "artist_asc";
             ViewBag.YearSort = sortOrder == "year_asc" ? "year_desc" : "year_asc";
             ViewBag.PriceSort = sortOrder == "price_asc" ? "price_desc" : "price_asc";
+
+            if (searchString != null)
+                page = 1;
+            else
+                searchString = currentFilter;
+            ViewBag.CurrentFilter = searchString;
+
             var albums = from a in db.Albums.Include(a => a.Artist) select a;
             //I realised that the above code worked without the .Include but further research told me that with .Include 
             //EF will use a join to grab both the Album and Artist tables in a single query. Without Include, 
@@ -62,8 +71,9 @@ namespace MyMusicApp.Controllers
                     albums = albums.Include(a => a.Artist).OrderBy(a => a.Title);
                     break;
             }
-
-            return View(albums.ToList());
+            int pageSize = 10;
+            int pageNumber = (page ?? 1);
+            return View(albums.ToPagedList(pageNumber, pageSize));
         }
 
         // GET: Album/Details/5
