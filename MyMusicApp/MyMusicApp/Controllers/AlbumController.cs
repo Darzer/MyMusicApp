@@ -16,9 +16,45 @@ namespace MyMusicApp.Controllers
         private MusicContext db = new MusicContext();
 
         // GET: Album
-        public ActionResult Index()
+        public ActionResult Index(string sortOrder)
         {
-            var albums = db.Albums.Include(a => a.Artist);
+            ViewBag.AlbumSort = String.IsNullOrEmpty(sortOrder) ? "album_desc" : "";
+            ViewBag.ArtistSort = sortOrder == "artist_asc" ? "artist_desc" : "artist_asc";
+            ViewBag.YearSort = sortOrder == "year_asc" ? "year_desc" : "year_asc";
+            ViewBag.PriceSort = sortOrder == "price_asc" ? "price_desc" : "price_asc";
+            var albums = from a in db.Albums.Include(a => a.Artist) select a;
+            //I realised that the above code worked without the .Include but further research told me that with .Include 
+            //EF will use a join to grab both the Album and Artist tables in a single query. Without Include, 
+            //EF will only grab Album and then grab Artist on demand which in most cases would be a hindrance to performance.
+
+            switch (sortOrder)
+            {
+                case "album_desc":
+                    albums = albums.Include(a => a.Artist).OrderByDescending(a => a.Title);
+                        break;
+                case "artist_asc":
+                    albums = albums.Include(a => a.Artist).OrderBy(a => a.Artist.FirstName).ThenBy(a => a.Artist.LastName);
+                    break;
+                case "artist_desc":
+                    albums = albums.Include(a => a.Artist).OrderByDescending(a => a.Artist.FirstName).ThenByDescending(a => a.Artist.LastName);
+                    break;
+                case "year_asc":
+                    albums = albums.Include(a => a.Artist).OrderBy(a => a.Year);
+                    break;
+                case "year_desc":
+                    albums = albums.Include(a => a.Artist).OrderByDescending(a => a.Year);
+                    break;
+                case "price_asc":
+                    albums = albums.Include(a => a.Artist).OrderBy(a => a.Price);
+                    break;
+                case "price_desc":
+                    albums = albums.Include(a => a.Artist).OrderByDescending(a => a.Price);
+                    break;
+                default:
+                    albums = albums.Include(a => a.Artist).OrderBy(a => a.Title);
+                    break;
+            }
+
             return View(albums.ToList());
         }
 

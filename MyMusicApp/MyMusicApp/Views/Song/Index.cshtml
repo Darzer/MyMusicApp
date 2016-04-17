@@ -12,16 +12,16 @@
 <table class="table">
     <tr>
         <th>
-            @Html.DisplayNameFor(model => model.Title)
+            @Html.ActionLink("Song", "Index", new { sortOrder = ViewBag.SongSort })
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Album.Title)
+            @Html.ActionLink("Album", "Index", new { sortOrder = ViewBag.AlbumSort })
         </th>
         <th>
-            Artist
+            @Html.ActionLink("Artist", "Index", new { sortOrder = ViewBag.ArtistSort })
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.TrackLength)
+            @Html.ActionLink("Duration", "Index", new { sortOrder = ViewBag.DurationSort })
         </th>
         <th></th>
     </tr>

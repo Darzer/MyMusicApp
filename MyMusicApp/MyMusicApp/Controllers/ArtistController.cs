@@ -16,9 +16,27 @@ namespace MyMusicApp.Controllers
         private MusicContext db = new MusicContext();
 
         // GET: Artist
-        public ActionResult Index()
+        public ActionResult Index(string sortOrder)
         {
-            return View(db.Artists.ToList());
+            ViewBag.FirstNameSort = String.IsNullOrEmpty(sortOrder) ? "first_name_desc" : "";
+            ViewBag.LastNameSort = sortOrder == "last_name_asc" ? "last_name_desc" : "last_name_asc";
+            var artists = from a in db.Artists select a;
+            switch(sortOrder)
+            {
+                case "first_name_desc":
+                    artists = artists.OrderByDescending(a => a.FirstName);
+                    break;
+                case "last_name_asc":
+                    artists = artists.OrderBy(a => a.LastName);
+                    break;
+                case "last_name_desc":
+                    artists = artists.OrderByDescending(a => a.LastName);
+                    break;
+                default:
+                    artists = artists.OrderBy(a => a.FirstName);
+                    break;
+            }
+            return View(artists.ToList());
         }
 
         // GET: Artist/Details/5

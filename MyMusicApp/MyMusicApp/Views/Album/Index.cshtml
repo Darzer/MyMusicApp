@@ -12,19 +12,19 @@
 <table class="table">
     <tr>
         <th>
-            @Html.DisplayNameFor(model => model.Title)
+            @Html.ActionLink("Album", "Index", new { sortOrder = ViewBag.AlbumSort })
         </th>
 
         <th>
-            Artist
+            @Html.ActionLink("Artist", "Index", new { sortOrder = ViewBag.ArtistSort })
         </th>
 
         <th>
-            @Html.DisplayNameFor(model => model.Year)
+            @Html.ActionLink("Year", "Index", new { sortOrder = ViewBag.YearSort })
         </th>
 
         <th>
-            @Html.DisplayNameFor(model => model.Price)
+            @Html.ActionLink("Price", "Index", new { sortOrder = ViewBag.PriceSort })
         </th>
         <th></th>
     </tr>
