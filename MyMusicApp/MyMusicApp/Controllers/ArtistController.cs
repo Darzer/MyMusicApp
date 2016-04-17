@@ -4,6 +4,7 @@ using System.Data;
 using System.Data.Entity;
 using System.Linq;
 using System.Net;
+using PagedList;
 using System.Web;
 using System.Web.Mvc;
 using MyMusicApp.DAL;
@@ -16,10 +17,18 @@ namespace MyMusicApp.Controllers
         private MusicContext db = new MusicContext();
 
         // GET: Artist
-        public ActionResult Index(string sortOrder, string searchString)
+        public ActionResult Index(string sortOrder, string currentFilter, string searchString, int? page)
         {
+            ViewBag.CurrentSort = sortOrder;
             ViewBag.FirstNameSort = String.IsNullOrEmpty(sortOrder) ? "first_name_desc" : "";
             ViewBag.LastNameSort = sortOrder == "last_name_asc" ? "last_name_desc" : "last_name_asc";
+
+            if (searchString != null)
+                page = 1;
+            else
+                searchString = currentFilter;
+            ViewBag.CurrentFilter = searchString;
+
             var artists = from a in db.Artists select a;
 
             // If searchString isn't empty this statement will compare it to Artist.FirstName & .LastName after capitalising each of them.
@@ -48,7 +57,9 @@ namespace MyMusicApp.Controllers
                     artists = artists.OrderBy(a => a.FirstName);
                     break;
             }
-            return View(artists.ToList());
+            int pageSize = 10;
+            int pageNumber = (page ?? 1);
+            return View(artists.ToPagedList(pageNumber, pageSize));
         }
 
         // GET: Artist/Details/5

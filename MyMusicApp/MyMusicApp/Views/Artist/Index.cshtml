@@ -1,29 +1,31 @@
-﻿@model IEnumerable<MyMusicApp.Models.Artist>
+﻿@model PagedList.IPagedList<MyMusicApp.Models.Artist> 
+    @using PagedList.Mvc;
+<link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
 
 @{
-    ViewBag.Title = "Index";
+    ViewBag.Title = "Artists";
 }
 
-<h2>Index</h2>
+<h2>Artists</h2>
 
 <p>
     @Html.ActionLink("Create New", "Create")
 </p>
 
-@using (Html.BeginForm())
+@using (Html.BeginForm("Index", "Artist", FormMethod.Get))
 {
     <p>
-        Find by Artist: @Html.TextBox("searchString") <input type="submit" value="Search" />
+        Find by Artist: @Html.TextBox("searchString", ViewBag.CurrentFilter as string) <input type="submit" value="Search" />
     </p>
 }
 
 <table class="table">
     <tr>
         <th>
-            @Html.ActionLink("First Name", "Index", new { sortOrder = ViewBag.FirstNameSort })
+            @Html.ActionLink("First Name", "Index", new { sortOrder = ViewBag.FirstNameSort, currentFilter = ViewBag.CurrentFilter })
         </th>
         <th>
-            @Html.ActionLink("Last Name", "Index", new { sortOrder = ViewBag.LastNameSort })
+            @Html.ActionLink("Last Name", "Index", new { sortOrder = ViewBag.LastNameSort, currentFilter = ViewBag.CurrentFilter })
         </th>
         <th></th>
     </tr>
@@ -45,3 +47,13 @@
 }
 
 </table>
+<br />
+Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of
+@Model.PageCount
+@Html.PagedListPager(Model, page => Url.Action("Index",
+ new
+ {
+     page,
+     sortOrder = ViewBag.CurrentSort,
+     currentFilter = ViewBag.CurrentFilter
+ }))

@@ -1,35 +1,37 @@
-﻿@model IEnumerable<MyMusicApp.Models.Song>
+﻿@model PagedList.IPagedList<MyMusicApp.Models.Song>
+    @using PagedList.Mvc ;
+<link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
 
 @{
-    ViewBag.Title = "Index";
+    ViewBag.Title = "Songs";
 }
 
-<h2>Index</h2>
+<h2>Songs</h2>
 
 <p>
     @Html.ActionLink("Create New", "Create")
 </p>
 
-@using (Html.BeginForm())
+@using (Html.BeginForm("Index", "Song", FormMethod.Get))
 {
     <p>
-        Find by Song, Album or Artist: @Html.TextBox("searchString") <input type="submit" value="Search" />
+        Find by Song, Album or Artist: @Html.TextBox("searchString", ViewBag.CurrentFilter as string) <input type="submit" value="Search" />
     </p>
 }
 
 <table class="table">
     <tr>
         <th>
-            @Html.ActionLink("Song", "Index", new { sortOrder = ViewBag.SongSort })
+            @Html.ActionLink("Song", "Index", new { sortOrder = ViewBag.SongSort, currentFilter = ViewBag.CurrentFilter })
         </th>
         <th>
-            @Html.ActionLink("Album", "Index", new { sortOrder = ViewBag.AlbumSort })
+            @Html.ActionLink("Album", "Index", new { sortOrder = ViewBag.AlbumSort, currentFilter = ViewBag.CurrentFilter })
         </th>
         <th>
-            @Html.ActionLink("Artist", "Index", new { sortOrder = ViewBag.ArtistSort })
+            @Html.ActionLink("Artist", "Index", new { sortOrder = ViewBag.ArtistSort, currentFilter = ViewBag.CurrentFilter })
         </th>
         <th>
-            @Html.ActionLink("Duration", "Index", new { sortOrder = ViewBag.DurationSort })
+            @Html.ActionLink("Duration", "Index", new { sortOrder = ViewBag.DurationSort, currentFilter = ViewBag.CurrentFilter })
         </th>
         <th></th>
     </tr>
@@ -57,3 +59,13 @@
 }
 
 </table>
+<br />
+Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of
+@Model.PageCount
+@Html.PagedListPager(Model, page => Url.Action("Index",
+ new
+ {
+     page,
+     sortOrder = ViewBag.CurrentSort,
+     currentFilter = ViewBag.CurrentFilter
+ }))
